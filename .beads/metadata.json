@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "xbmc",
+  "project_id": "d1a5bf5c-bb31-4799-8da4-4d019199e983"
+}

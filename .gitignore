@@ -268,3 +268,7 @@ exclude_dll.txt
 
 # clangd index
 .cache/
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
