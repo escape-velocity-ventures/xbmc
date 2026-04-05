@@ -10,11 +10,34 @@
 
 /*!
  \file MusicDatabase.h
-\brief
+ \brief Facade for the Kodi music library database.
+
+ CMusicDatabase is a thin facade that delegates to focused extracted classes:
+
+   - CMusicSchemaManager       DDL: tables, views, triggers, analytics
+   - CMusicDatasetHelper       Hydration of domain objects from dataset records
+   - CMusicQueryBuilder        SQL generation and JSON-RPC query assembly
+   - CMusicCRUDRepository      Song/Album/Artist CRUD and link-table operations
+   - CMusicNavRepository       Navigation queries (GetXxxNav, GetXxxByWhere)
+   - CMusicSearchService       Full-text search across artists, albums, songs
+   - CMusicPlaylistService     Top-100, recently-added/played, play-count tracking
+   - CMusicMaintenanceService  Cleanup, orphan removal, CDDB management
+
+ All public method signatures are preserved for backward compatibility.
+ Each delegating method is a 1-3 line wrapper that forwards to the
+ appropriate extracted class.
 */
 
 #include "addons/Scraper.h"
 #include "dbwrappers/Database.h"
+#include "music/MusicCRUDRepository.h"
+#include "music/MusicDatasetHelper.h"
+#include "music/MusicMaintenanceService.h"
+#include "music/MusicNavRepository.h"
+#include "music/MusicPlaylistService.h"
+#include "music/MusicQueryBuilder.h"
+#include "music/MusicSchemaManager.h"
+#include "music/MusicSearchService.h"
 #include "settings/LibExportSettings.h"
 #include "utils/Artwork.h"
 #include "utils/SortUtils.h"
@@ -78,21 +101,27 @@ class CFileItemList;
 
 /*!
  \ingroup music
- \brief Class to store and read tag information
+ \brief Facade class for the Kodi music library database.
 
- CMusicDatabase can be used to read and store
- tag information for faster access. It is based on
- sqlite (http://www.sqlite.org).
+ CMusicDatabase delegates to extracted helper/repository/service classes
+ while preserving the original public API surface for all callers.
 
- Here is the database layout:
-  \image html musicdatabase.png
-
- \sa CAlbum, CSong, CMapSong
+ \sa CMusicCRUDRepository, CMusicNavRepository, CMusicQueryBuilder,
+     CMusicSearchService, CMusicPlaylistService, CMusicMaintenanceService,
+     CMusicDatasetHelper, KODI::DATABASE::CMusicSchemaManager
  */
 class CMusicDatabase : public CDatabase
 {
   friend class DatabaseUtils;
   friend class TestDatabaseUtilsHelper;
+
+  // Extracted classes that access internal database state
+  friend class CMusicCRUDRepository;
+  friend class CMusicNavRepository;
+  friend class CMusicQueryBuilder;
+  friend class CMusicSearchService;
+  friend class CMusicPlaylistService;
+  friend class CMusicMaintenanceService;
 
 public:
   CMusicDatabase();
@@ -978,138 +1007,12 @@ private:
   std::map<std::string, int, std::less<>> m_pathCache;
   bool m_translateBlankArtist{true};
 
-  // Fields should be ordered as they
-  // appear in the songview
-  enum SongFields
-  {
-    song_idSong = 0,
-    song_strArtists,
-    song_strArtistSort,
-    song_strGenres,
-    song_strTitle,
-    song_iTrack,
-    song_iDuration,
-    song_strReleaseDate,
-    song_strOrigReleaseDate,
-    song_strDiscSubtitle,
-    song_strFileName,
-    song_strMusicBrainzTrackID,
-    song_iTimesPlayed,
-    song_iStartOffset,
-    song_iEndOffset,
-    song_lastplayed,
-    song_rating,
-    song_userrating,
-    song_votes,
-    song_comment,
-    song_idAlbum,
-    song_strAlbum,
-    song_strPath,
-    song_strReleaseStatus,
-    song_bCompilation,
-    song_bBoxedSet,
-    song_strAlbumArtists,
-    song_strAlbumArtistSort,
-    song_strAlbumReleaseType,
-    song_mood,
-    song_strReplayGain,
-    song_iBPM,
-    song_iBitRate,
-    song_iSampleRate,
-    song_iChannels,
-    song_songVideoURL,
-    song_iAlbumDuration,
-    song_iDiscTotal,
-    song_dateAdded,
-    song_dateNew,
-    song_dateModified,
-    song_enumCount // end of the enum, do not add past here
-  };
-
-  // Fields should be ordered as they
-  // appear in the albumview
-  enum AlbumFields
-  {
-    album_idAlbum = 0,
-    album_strAlbum,
-    album_strMusicBrainzAlbumID,
-    album_strReleaseGroupMBID,
-    album_strArtists,
-    album_strArtistSort,
-    album_strGenres,
-    album_strReleaseDate,
-    album_strOrigReleaseDate,
-    album_bBoxedSet,
-    album_strMoods,
-    album_strStyles,
-    album_strThemes,
-    album_strReview,
-    album_strLabel,
-    album_strType,
-    album_strReleaseStatus,
-    album_strThumbURL,
-    album_fRating,
-    album_iUserrating,
-    album_iVotes,
-    album_bCompilation,
-    album_bScrapedMBID,
-    album_lastScraped,
-    album_dateAdded,
-    album_dateNew,
-    album_dateModified,
-    album_iTimesPlayed,
-    album_strReleaseType,
-    album_iTotalDiscs,
-    album_dtLastPlayed,
-    album_iAlbumDuration,
-    album_enumCount // end of the enum, do not add past here
-  };
-
-  // Fields should be ordered as they
-  // appear in the songartistview/albumartistview
-  enum ArtistCreditFields
-  {
-    // used for GetAlbum to get the cascaded album/song artist credits
-    artistCredit_idEntity = 0, // can be idSong or idAlbum depending on context
-    artistCredit_idArtist,
-    artistCredit_idRole,
-    artistCredit_strRole,
-    artistCredit_strArtist,
-    artistCredit_strSortName,
-    artistCredit_strMusicBrainzArtistID,
-    artistCredit_iOrder,
-    artistCredit_enumCount
-  };
-
-  // Fields should be ordered as they
-  // appear in the artistview
-  enum ArtistFields
-  {
-    artist_idArtist = 0,
-    artist_strArtist,
-    artist_strSortName,
-    artist_strMusicBrainzArtistID,
-    artist_strType,
-    artist_strGender,
-    artist_strDisambiguation,
-    artist_strBorn,
-    artist_strFormed,
-    artist_strGenres,
-    artist_strMoods,
-    artist_strStyles,
-    artist_strInstruments,
-    artist_strBiography,
-    artist_strDied,
-    artist_strDisbanded,
-    artist_strYearsActive,
-    artist_strImage,
-    artist_bScrapedMBID,
-    artist_lastScraped,
-    artist_dateAdded,
-    artist_dateNew,
-    artist_dateModified,
-    artist_enumCount // end of the enum, do not add past here
-  };
+  // Extracted sub-components (constructed on first use or in constructor)
+  CMusicCRUDRepository m_crudRepo{*this};
+  CMusicNavRepository m_navRepo{*this};
+  CMusicSearchService m_searchService{*this};
+  CMusicPlaylistService m_playlistService{*this};
+  CMusicMaintenanceService m_maintenanceService{*this};
 
   // Fields fetched by GetArtistsByWhereJSON,  order same as in JSONtoDBArtist
   enum JoinToArtistFields

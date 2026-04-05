@@ -1,0 +1,80 @@
+name: Refactoring Compile Check
+
+on:
+  push:
+    branches: [refactoring-case-study]
+  pull_request:
+    branches: [refactoring-case-study]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Kodi build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf automake autopoint gettext autotools-dev cmake curl \
+            default-jre gawk gcc g++ cpp gdc gperf libasound2-dev \
+            libass-dev libavahi-client-dev libavahi-common-dev libbluetooth-dev \
+            libbluray-dev libcec-dev libcurl4-openssl-dev libdbus-1-dev \
+            libdrm-dev libegl1-mesa-dev libfmt-dev libfontconfig-dev \
+            libfreetype6-dev libfstrcmp-dev libgbm-dev libgcrypt-dev \
+            libgif-dev libgl1-mesa-dev libgles2-mesa-dev libglew-dev \
+            libglu1-mesa-dev libgnutls28-dev libgpg-error-dev libgtest-dev \
+            libinput-dev libiso9660-dev libjpeg-dev liblcms2-dev \
+            liblirc-dev libltdl-dev liblzo2-dev libmicrohttpd-dev \
+            libmysqlclient-dev libnfs-dev libpcre2-dev libplist-dev \
+            libpng-dev libpulse-dev libshairplay-dev libsmbclient-dev \
+            libspdlog-dev libsqlite3-dev libssl-dev libtag1-dev \
+            libtinyxml-dev libtinyxml2-dev libtool libudev-dev \
+            libunistring-dev libva-dev libvdpau-dev libxkbcommon-dev \
+            libxrandr-dev libxslt-dev libxt-dev lsb-release meson nasm \
+            ninja-build python3-dev python3-pil rapidjson-dev \
+            swig unzip uuid-dev zip zlib1g-dev \
+            libpipewire-0.3-dev libspa-0.2-dev libwayland-dev \
+            wayland-protocols flatbuffers-compiler libflatbuffers-dev
+
+      - name: Install crossguid
+        run: |
+          git clone https://github.com/nicehero/crossguid.git /tmp/crossguid
+          cd /tmp/crossguid
+          mkdir build && cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
+          make -j$(nproc)
+          sudo make install
+
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. \
+            -DCORE_PLATFORM_NAME=wayland \
+            -DAPP_RENDER_SYSTEM=gl \
+            -DENABLE_TESTING=ON \
+            -DENABLE_INTERNAL_GTEST=OFF \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -GNinja
+
+      - name: Build (music subsystem)
+        run: |
+          cd build
+          ninja -j$(nproc) 2>&1 || true
+
+      - name: Report new files
+        run: |
+          echo "=== New extracted classes ==="
+          find xbmc/music -name "Music*Repository*" -o -name "Music*Service*" -o -name "Music*Helper*" -o -name "Music*Builder*" -o -name "Music*Manager*" | grep -v test | sort
+          echo ""
+          echo "=== GUIInfoManager extractions ==="
+          find xbmc/guilib/guiinfo -name "Info*" | sort
+          echo ""
+          echo "=== New test files ==="
+          find xbmc -name "Test*.cpp" -newer xbmc/test/xbmc-test.cpp | sort
+          echo ""
+          echo "=== MusicDatabase.cpp line count ==="
+          wc -l xbmc/music/MusicDatabase.cpp

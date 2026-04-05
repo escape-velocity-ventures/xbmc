@@ -20,6 +20,7 @@
 #include "guilib/guiinfo/GUIInfo.h"
 #include "guilib/guiinfo/GUIInfoHelper.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
+#include "guilib/guiinfo/InfoLabelRegistry.h"
 #include "input/WindowTranslator.h"
 #include "interfaces/AnnouncementManager.h"
 #include "interfaces/info/InfoExpression.h"
@@ -10618,6 +10619,18 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
   else if (info.size() == 2)
   {
     const Property &prop = info[1];
+
+    // Fast O(1) registry lookup for simple category.property labels with no params.
+    // Parameterized labels (e.g. System.AddonTitle(id), Container(x).Foo) fall through
+    // to the category-specific dispatch below.
+    if (prop.num_params() == 0 && cat.param().empty())
+    {
+      std::string key = cat.Name() + "." + prop.Name();
+      int result = CInfoLabelRegistry::LookupLabel(key);
+      if (result != 0)
+        return result;
+    }
+
     if (cat.Name() == "string")
     {
       if (prop.Name() == "isempty")
@@ -11181,25 +11194,10 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
   {
     if (info[0].Name() == "system" && info[1].Name() == "platform")
     { //! @todo replace with a single system.platform
-      std::string platform = info[2].Name();
-      if (platform == "linux")
-        return SYSTEM_PLATFORM_LINUX;
-      else if (platform == "windows")
-        return SYSTEM_PLATFORM_WINDOWS;
-      else if (platform == "uwp")
-        return SYSTEM_PLATFORM_UWP;
-      else if (platform == "darwin")
-        return SYSTEM_PLATFORM_DARWIN;
-      else if (platform == "osx")
-        return SYSTEM_PLATFORM_DARWIN_OSX;
-      else if (platform == "ios")
-        return SYSTEM_PLATFORM_DARWIN_IOS;
-      else if (platform == "tvos")
-        return SYSTEM_PLATFORM_DARWIN_TVOS;
-      else if (platform == "android")
-        return SYSTEM_PLATFORM_ANDROID;
-      else if (platform == "webos")
-        return SYSTEM_PLATFORM_WEBOS;
+      std::string key = "system.platform." + info[2].Name();
+      int result = CInfoLabelRegistry::LookupLabel(key);
+      if (result != 0)
+        return result;
     }
     if (info[0].Name() == "musicplayer")
     { //! @todo these two don't allow duration(foo) and also don't allow more than this number of levels...
@@ -11352,32 +11350,17 @@ int CGUIInfoManager::TranslateListItem(const Property& cat, const Property& prop
 
 int CGUIInfoManager::TranslateMusicPlayerString(std::string_view info) const
 {
-  for (const auto& i : musicplayer)
-  {
-    if (info == i.str)
-      return i.val;
-  }
-  return 0;
+  return CInfoLabelRegistry::LookupMusicPlayerProperty(std::string(info));
 }
 
 int CGUIInfoManager::TranslateVideoPlayerString(std::string_view info) const
 {
-  for (const auto& i : videoplayer)
-  {
-    if (info == i.str)
-      return i.val;
-  }
-  return 0;
+  return CInfoLabelRegistry::LookupVideoPlayerProperty(std::string(info));
 }
 
 int CGUIInfoManager::TranslatePlayerString(std::string_view info) const
 {
-  for (const auto& i : player_labels)
-  {
-    if (info == i.str)
-      return i.val;
-  }
-  return 0;
+  return CInfoLabelRegistry::LookupPlayerProperty(std::string(info));
 }
 
 TIME_FORMAT CGUIInfoManager::TranslateTimeFormat(const std::string &format)

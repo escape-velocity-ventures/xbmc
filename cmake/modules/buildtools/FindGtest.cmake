@@ -1,17 +1,20 @@
 #.rst:
 # FindGtest
 # --------
-# Finds the gtest library
+# Finds the gtest library (and optionally gmock)
 #
 # This will define the following variables::
 #
 # GTEST_FOUND - system has gtest
 # GTEST_INCLUDE_DIRS - the gtest include directories
 # GTEST_LIBRARIES - the gtest libraries
+# GMOCK_FOUND - system has gmock (when built with BUILD_GMOCK=ON)
+# GMOCK_LIBRARIES - the gmock libraries
 #
 # and the following imported targets:
 #
 #   Gtest::Gtest   - The gtest library
+#   Gtest::Gmock   - The gmock library (when available)
 
 if(ENABLE_INTERNAL_GTEST)
   include(cmake/scripts/common/ModuleHelpers.cmake)
@@ -25,7 +28,7 @@ if(ENABLE_INTERNAL_GTEST)
   # Override build type detection and always build as release
   set(${${CMAKE_FIND_PACKAGE_NAME}_MODULE}_BUILD_TYPE Release)
 
-  set(CMAKE_ARGS -DBUILD_GMOCK=OFF
+  set(CMAKE_ARGS -DBUILD_GMOCK=ON
                  -DINSTALL_GTEST=ON
                  -DBUILD_SHARED_LIBS=OFF
                  -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>)
@@ -57,8 +60,14 @@ else()
   find_library(GTEST_LIBRARY_DEBUG NAMES gtestd
                                    HINTS ${PC_GTEST_LIBDIR})
 
+  find_library(GMOCK_LIBRARY_RELEASE NAMES gmock
+                                     HINTS ${PC_GTEST_LIBDIR})
+  find_library(GMOCK_LIBRARY_DEBUG NAMES gmockd
+                                   HINTS ${PC_GTEST_LIBDIR})
+
   include(SelectLibraryConfigurations)
   select_library_configurations(GTEST)
+  select_library_configurations(GMOCK)
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -69,6 +78,11 @@ find_package_handle_standard_args(Gtest
 if(GTEST_FOUND)
   set(GTEST_LIBRARIES ${GTEST_LIBRARY})
   set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIR})
+
+  if(GMOCK_LIBRARY)
+    set(GMOCK_FOUND TRUE)
+    set(GMOCK_LIBRARIES ${GMOCK_LIBRARY})
+  endif()
 endif()
 
 if(NOT TARGET Gtest::Gtest)
@@ -78,4 +92,11 @@ if(NOT TARGET Gtest::Gtest)
                                      INTERFACE_INCLUDE_DIRECTORIES "${GTEST_INCLUDE_DIR}")
 endif()
 
-mark_as_advanced(GTEST_INCLUDE_DIR GTEST_LIBRARY)
+if(GMOCK_FOUND AND NOT TARGET Gtest::Gmock)
+  add_library(Gtest::Gmock UNKNOWN IMPORTED)
+  set_target_properties(Gtest::Gmock PROPERTIES
+                                     IMPORTED_LOCATION "${GMOCK_LIBRARY}"
+                                     INTERFACE_INCLUDE_DIRECTORIES "${GTEST_INCLUDE_DIR}")
+endif()
+
+mark_as_advanced(GTEST_INCLUDE_DIR GTEST_LIBRARY GMOCK_LIBRARY)

@@ -272,3 +272,6 @@ exclude_dll.txt
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+.claude/
+.beads/
+build/

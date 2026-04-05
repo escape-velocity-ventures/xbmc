@@ -9,6 +9,7 @@
 #pragma once
 
 #include "guilib/guiinfo/GUIInfoProviders.h"
+#include "guilib/guiinfo/InfoExpressionParser.h"
 #include "interfaces/info/InfoBool.h"
 #include "interfaces/info/SkinVariable.h"
 #include "messaging/IMessageTarget.h"
@@ -153,41 +154,15 @@ public:
   KODI::GUILIB::GUIINFO::CGUIInfoProviders& GetInfoProviders() { return m_infoProviders; }
 
 private:
-  /*! \brief class for holding information on properties
+  /*! \brief Alias for the parser's Property type, used throughout dispatch logic.
    */
-  class Property
-  {
-  public:
-    Property(const std::string &property, const std::string &parameters);
-
-    const std::string& Name() const { return m_name; }
-
-    const std::string& param(size_t n = 0) const;
-    unsigned int num_params() const;
-
-  private:
-    std::string m_name;
-    std::vector<std::string> params;
-  };
-
-  /*! \brief Split an info string into it's constituent parts and parameters
-   Format is:
-
-     info1(params1).info2(params2).info3(params3) ...
-
-   where the parameters are an optional comma separated parameter list.
-
-   \param infoString the original string
-   \param info the resulting pairs of info and parameters.
-   */
-  void SplitInfoString(const std::string& infoString, std::vector<Property>& info) const;
+  using Property = KODI::GUILIB::GUIINFO::CInfoExpressionParser::Property;
 
   int TranslateSingleString(const std::string &strCondition);
   int TranslateListItem(const Property& cat, const Property& prop, int id, bool container);
   int TranslateMusicPlayerString(std::string_view info) const;
   int TranslateVideoPlayerString(std::string_view info) const;
   int TranslatePlayerString(std::string_view info) const;
-  static TIME_FORMAT TranslateTimeFormat(const std::string &format);
 
   std::string GetMultiInfoLabel(const KODI::GUILIB::GUIINFO::CGUIInfo &info, int contextWindow, std::string *fallback = nullptr) const;
   bool GetMultiInfoInt(int &value, const KODI::GUILIB::GUIINFO::CGUIInfo &info, int contextWindow, const CGUIListItem *item) const;
