@@ -59,7 +59,6 @@ jobs:
             -DENABLE_INTERNAL_FMT=ON \
             -DENABLE_INTERNAL_SPDLOG=ON \
             -DENABLE_INTERNAL_PCRE2=ON \
-            -DENABLE_INTERNAL_FSTRCMP=ON \
             -DENABLE_INTERNAL_DAV1D=ON \
             -DENABLE_INTERNAL_UDFREAD=ON \
             -DCMAKE_BUILD_TYPE=Debug \
