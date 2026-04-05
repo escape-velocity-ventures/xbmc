@@ -39,15 +39,6 @@ jobs:
             libpipewire-0.3-dev libspa-0.2-dev libwayland-dev \
             wayland-protocols flatbuffers-compiler libflatbuffers-dev
 
-      - name: Install crossguid
-        run: |
-          git clone https://github.com/nicehero/crossguid.git /tmp/crossguid
-          cd /tmp/crossguid
-          mkdir build && cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
-          make -j$(nproc)
-          sudo make install
-
       - name: Configure CMake
         run: |
           mkdir -p build
@@ -56,7 +47,8 @@ jobs:
             -DCORE_PLATFORM_NAME=wayland \
             -DAPP_RENDER_SYSTEM=gl \
             -DENABLE_TESTING=ON \
-            -DENABLE_INTERNAL_GTEST=OFF \
+            -DENABLE_INTERNAL_GTEST=ON \
+            -DENABLE_INTERNAL_CROSSGUID=ON \
             -DCMAKE_BUILD_TYPE=Debug \
             -GNinja
 
