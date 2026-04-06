@@ -19,6 +19,7 @@
 #include "games/tags/GameInfoTag.h"
 #include "guilib/guiinfo/GUIInfo.h"
 #include "guilib/guiinfo/GUIInfoHelper.h"
+#include "guilib/guiinfo/InfoExpressionParser.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
 #include "guilib/guiinfo/InfoLabelRegistry.h"
 #include "input/WindowTranslator.h"
@@ -48,6 +49,7 @@ using namespace KODI;
 using namespace KODI::GUILIB;
 using namespace KODI::GUILIB::GUIINFO;
 using namespace INFO;
+using Property = CInfoExpressionParser::Property;
 
 namespace
 {
@@ -10487,73 +10489,7 @@ int CGUIInfoManager::TranslateString(const std::string& condition)
   return TranslateSingleString(strCondition);
 }
 
-CGUIInfoManager::Property::Property(const std::string& property, const std::string& parameters)
-  : m_name(property)
-{
-  CUtil::SplitParams(parameters, params);
-}
-
-const std::string& CGUIInfoManager::Property::param(size_t n /* = 0 */) const
-{
-  if (n < params.size())
-    return params[n];
-  return StringUtils::Empty;
-}
-
-unsigned int CGUIInfoManager::Property::num_params() const
-{
-  return params.size();
-}
-
-void CGUIInfoManager::SplitInfoString(const std::string& infoString,
-                                      std::vector<Property>& info) const
-{
-  // our string is of the form:
-  // category[(params)][.info(params).info2(params)] ...
-  // so we need to split on . while taking into account of () pairs
-  unsigned int parentheses = 0;
-  std::string property;
-  std::string param;
-  for (const char c : infoString)
-  {
-    if (c == '(')
-    {
-      if (!parentheses++)
-        continue;
-    }
-    else if (c == ')')
-    {
-      if (!parentheses)
-        CLog::Log(LOGERROR, "unmatched parentheses in {}", infoString);
-      else if (!--parentheses)
-        continue;
-    }
-    else if (c == '.' && !parentheses)
-    {
-      if (!property.empty()) // add our property and parameters
-      {
-        StringUtils::ToLower(property);
-        info.emplace_back(property, param);
-      }
-      property.clear();
-      param.clear();
-      continue;
-    }
-    if (parentheses)
-      param += c;
-    else
-      property += c;
-  }
-
-  if (parentheses)
-    CLog::Log(LOGERROR, "unmatched parentheses in {}", infoString);
-
-  if (!property.empty())
-  {
-    StringUtils::ToLower(property);
-    info.emplace_back(property, param);
-  }
-}
+// Property, SplitInfoString, and TranslateTimeFormat are now in CInfoExpressionParser.
 
 /// \brief Translates a string as given by the skin into an int that we use for more
 /// efficient retrieval of data.
@@ -10603,7 +10539,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
   StringUtils::Trim(strTest);
 
   std::vector< Property> info;
-  SplitInfoString(strTest, info);
+  CInfoExpressionParser::SplitInfoString(strTest, info);
 
   if (info.empty())
     return 0;
@@ -10702,7 +10638,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
       for (const auto& player_time : player_times)
       {
         if (prop.Name() == player_time.str)
-          return AddMultiInfo(CGUIInfo(player_time.val, TranslateTimeFormat(prop.param())));
+          return AddMultiInfo(CGUIInfo(player_time.val, CInfoExpressionParser::TranslateTimeFormat(prop.param())));
       }
       if (prop.Name() == "process" && prop.num_params())
       {
@@ -10859,7 +10795,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
           return AddMultiInfo(CGUIInfo(SYSTEM_TIME, TIME_FORMAT_GUESS));
         if (prop.num_params() == 1)
         {
-          TIME_FORMAT timeFormat = TranslateTimeFormat(prop.param(0));
+          TIME_FORMAT timeFormat = CInfoExpressionParser::TranslateTimeFormat(prop.param(0));
           if (timeFormat == TIME_FORMAT_GUESS)
             return AddMultiInfo(CGUIInfo(SYSTEM_TIME, StringUtils::TimeStringToSeconds(prop.param(0))));
           return AddMultiInfo(CGUIInfo(SYSTEM_TIME, timeFormat));
@@ -10913,7 +10849,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
       for (const auto& player_time : player_times) //! @todo remove these, they're repeats
       {
         if (prop.Name() == player_time.str)
-          return AddMultiInfo(CGUIInfo(player_time.val, TranslateTimeFormat(prop.param())));
+          return AddMultiInfo(CGUIInfo(player_time.val, CInfoExpressionParser::TranslateTimeFormat(prop.param())));
       }
       if (prop.Name() == "content" && prop.num_params())
       {
@@ -10945,7 +10881,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
         for (const auto& player_time : player_times) //! @todo remove these, they're repeats
         {
           if (prop.Name() == player_time.str)
-            return AddMultiInfo(CGUIInfo(player_time.val, TranslateTimeFormat(prop.param())));
+            return AddMultiInfo(CGUIInfo(player_time.val, CInfoExpressionParser::TranslateTimeFormat(prop.param())));
         }
       }
       if (prop.Name() == "content" && prop.num_params())
@@ -11175,7 +11111,7 @@ int CGUIInfoManager::TranslateSingleString(const std::string &strCondition, bool
       for (const auto& pvr_time : pvr_times)
       {
         if (prop.Name() == pvr_time.str)
-          return AddMultiInfo(CGUIInfo(pvr_time.val, TranslateTimeFormat(prop.param())));
+          return AddMultiInfo(CGUIInfo(pvr_time.val, CInfoExpressionParser::TranslateTimeFormat(prop.param())));
       }
     }
     else if (cat.Name() == "rds")
@@ -11305,7 +11241,7 @@ int CGUIInfoManager::TranslateListItem(const Property& cat, const Property& prop
     }
     else if (prop.Name() == "duration" || prop.Name() == "nextduration")
     {
-      data4 = TranslateTimeFormat(prop.param());
+      data4 = CInfoExpressionParser::TranslateTimeFormat(prop.param());
     }
     else if (prop.Name() == "audiochannels" || prop.Name() == "musicchannels")
     {
@@ -11361,43 +11297,6 @@ int CGUIInfoManager::TranslateVideoPlayerString(std::string_view info) const
 int CGUIInfoManager::TranslatePlayerString(std::string_view info) const
 {
   return CInfoLabelRegistry::LookupPlayerProperty(std::string(info));
-}
-
-TIME_FORMAT CGUIInfoManager::TranslateTimeFormat(const std::string &format)
-{
-  if (format.empty())
-    return TIME_FORMAT_GUESS;
-  else if (StringUtils::EqualsNoCase(format, "hh"))
-    return TIME_FORMAT_HH;
-  else if (StringUtils::EqualsNoCase(format, "mm"))
-    return TIME_FORMAT_MM;
-  else if (StringUtils::EqualsNoCase(format, "ss"))
-    return TIME_FORMAT_SS;
-  else if (StringUtils::EqualsNoCase(format, "hh:mm"))
-    return TIME_FORMAT_HH_MM;
-  else if (StringUtils::EqualsNoCase(format, "mm:ss"))
-    return TIME_FORMAT_MM_SS;
-  else if (StringUtils::EqualsNoCase(format, "hh:mm:ss"))
-    return TIME_FORMAT_HH_MM_SS;
-  else if (StringUtils::EqualsNoCase(format, "hh:mm:ss xx"))
-    return TIME_FORMAT_HH_MM_SS_XX;
-  else if (StringUtils::EqualsNoCase(format, "h"))
-    return TIME_FORMAT_H;
-  else if (StringUtils::EqualsNoCase(format, "m"))
-    return TIME_FORMAT_M;
-  else if (StringUtils::EqualsNoCase(format, "h:mm:ss"))
-    return TIME_FORMAT_H_MM_SS;
-  else if (StringUtils::EqualsNoCase(format, "h:mm:ss xx"))
-    return TIME_FORMAT_H_MM_SS_XX;
-  else if (StringUtils::EqualsNoCase(format, "xx"))
-    return TIME_FORMAT_XX;
-  else if (StringUtils::EqualsNoCase(format, "secs"))
-    return TIME_FORMAT_SECS;
-  else if (StringUtils::EqualsNoCase(format, "mins"))
-    return TIME_FORMAT_MINS;
-  else if (StringUtils::EqualsNoCase(format, "hours"))
-    return TIME_FORMAT_HOURS;
-  return TIME_FORMAT_GUESS;
 }
 
 std::string CGUIInfoManager::GetLabel(int info, int contextWindow, std::string *fallback) const
