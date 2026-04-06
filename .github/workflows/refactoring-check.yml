@@ -42,6 +42,37 @@ jobs:
             libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev \
             libpostproc-dev libswresample-dev libswscale-dev
 
+      # Cache internal dependency builds (FFmpeg, crossguid, etc.)
+      # These take 30-60 minutes to compile from source.
+      # The cache key includes the cmake flags so a flag change invalidates.
+      - name: Cache internal dependency builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/build/ffmpeg-prefix
+            build/build/crossguid-prefix
+            build/build/exiv2-prefix
+            build/build/nlohmannjson-prefix
+            build/build/flatbuffers-prefix
+            build/build/fmt-prefix
+            build/build/spdlog-prefix
+            build/build/pcre2-prefix
+            build/build/dav1d-prefix
+            build/build/udfread-prefix
+            build/build/gtest-prefix
+          key: kodi-internal-deps-x11-${{ hashFiles('cmake/modules/Find*.cmake') }}
+          restore-keys: |
+            kodi-internal-deps-x11-
+
+      # Also cache the full build directory for incremental compilation
+      - name: Cache build directory
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: kodi-build-x11-${{ github.sha }}
+          restore-keys: |
+            kodi-build-x11-
+
       - name: Configure CMake
         run: |
           mkdir -p build
@@ -64,12 +95,13 @@ jobs:
             -DCMAKE_BUILD_TYPE=Debug \
             -GNinja
 
-      - name: Build (music subsystem)
+      - name: Build
         run: |
           cd build
-          ninja -j$(nproc) 2>&1 || true
+          ninja -j$(nproc) 2>&1 | tail -100
 
-      - name: Report new files
+      - name: Report results
+        if: always()
         run: |
           echo "=== New extracted classes ==="
           find xbmc/music -name "Music*Repository*" -o -name "Music*Service*" -o -name "Music*Helper*" -o -name "Music*Builder*" -o -name "Music*Manager*" | grep -v test | sort
