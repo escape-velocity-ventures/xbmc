@@ -47,7 +47,7 @@ jobs:
           mkdir -p build
           cd build
           cmake .. \
-            -DCORE_PLATFORM_NAME=wayland \
+            -DCORE_PLATFORM_NAME=x11 \
             -DAPP_RENDER_SYSTEM=gl \
             -DENABLE_TESTING=ON \
             -DENABLE_INTERNAL_GTEST=ON \
