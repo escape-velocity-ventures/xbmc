@@ -21,12 +21,15 @@
 #include "settings/SettingsComponent.h"
 #include "utils/DatabaseUtils.h"
 #include "LangInfo.h"
+#include "utils/Random.h"
 #include "utils/StringUtils.h"
 #include "utils/Variant.h"
 #include "utils/log.h"
 
 #include <array>
 #include <chrono>
+
+using namespace KODI;
 
 using Filter = CDatabase::Filter;
 using DatasetLayout = CDatabase::DatasetLayout;

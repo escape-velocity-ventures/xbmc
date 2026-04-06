@@ -167,6 +167,65 @@ enum ArtistFields
   artist_enumCount // end of the enum, do not add past here
 };
 
+// ---------------------------------------------------------------------------
+// Join-field enums (column order must match the JSON-to-DB join queries)
+//
+// These were originally private enums inside CMusicDatabase.  They now live at
+// namespace scope so that CMusicQueryBuilder (and future repositories) can use
+// them without qualification.
+// ---------------------------------------------------------------------------
+
+// Fields fetched by GetArtistsByWhereJSON, order same as in JSONtoDBArtist
+enum JoinToArtistFields
+{
+  joinToArtist_isSong = 0,
+  joinToArtist_idSourceAlbum,
+  joinToArtist_idSourceSong,
+  joinToArtist_idSongGenreAlbum,
+  joinToArtist_idSongGenreSong,
+  joinToArtist_strSongGenreAlbum,
+  joinToArtist_strSongGenreSong,
+  joinToArtist_idArt,
+  joinToArtist_artType,
+  joinToArtist_artURL,
+  joinToArtist_idRole,
+  joinToArtist_strRole,
+  joinToArtist_iOrderRole,
+  joinToArtist_isalbumartist,
+  joinToArtist_thumbnail,
+  joinToArtist_fanart,
+  joinToArtist_enumCount // end of the enum, do not add past here
+};
+
+// Fields fetched by GetAlbumsByWhereJSON, order same as in JSONtoDBAlbum
+enum JoinToAlbumFields
+{
+  joinToAlbum_idArtist = 0,
+  joinToAlbum_strArtist,
+  joinToAlbum_strArtistMBID,
+  joinToAlbum_enumCount // end of the enum, do not add past here
+};
+
+// Fields fetched by GetSongsByWhereJSON, order same as in JSONtoDBSong
+enum JoinToSongFields
+{
+  // Used by GetSongsByWhereJSON
+  joinToSongs_idAlbumArtist = 0,
+  joinToSongs_strAlbumArtist,
+  joinToSongs_strAlbumArtistMBID,
+  joinToSongs_iOrderAlbumArtist,
+  joinToSongs_idArtist,
+  joinToSongs_strArtist,
+  joinToSongs_strArtistMBID,
+  joinToSongs_iOrderArtist,
+  joinToSongs_idRole,
+  joinToSongs_strRole,
+  joinToSongs_iOrderRole,
+  joinToSongs_idGenre,
+  joinToSongs_iOrderGenre,
+  joinToSongs_enumCount // end of the enum, do not add past here
+};
+
 /*!
  \ingroup music
  \brief Static helper class for hydrating music domain objects from dataset records.
