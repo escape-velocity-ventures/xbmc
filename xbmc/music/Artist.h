@@ -134,6 +134,8 @@ class CArtistCredit
 {
   friend class CAlbum;
   friend class CMusicDatabase;
+  friend class CMusicDatasetHelper;
+  friend class CMusicCRUDRepository;
 
 public:
   CArtistCredit() = default;
