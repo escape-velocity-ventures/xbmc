@@ -30,6 +30,7 @@
 #ifdef HAS_OPTICAL_DRIVE
 #include "network/Network.h"
 #include "network/cddb.h"
+#include "storage/cdioSupport.h"
 #endif // HAS_OPTICAL_DRIVE
 #include "profiles/ProfileManager.h"
 #include "resources/LocalizeStrings.h"
@@ -49,6 +50,11 @@
 
 using namespace XFILE;
 using namespace KODI::MESSAGING;
+using KODI::MESSAGING::HELPERS::DialogResponse;
+#ifdef HAS_OPTICAL_DRIVE
+using CDDB::Xcddb;
+using MEDIA_DETECT::CCdInfo;
+#endif
 
 CMusicMaintenanceService::CMusicMaintenanceService(CMusicDatabase& db) : m_db(db)
 {

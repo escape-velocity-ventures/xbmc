@@ -955,7 +955,7 @@ bool CMusicNavRepository::GetAlbumsByWhere(const std::string& baseDir,
       {
         CMusicDbUrl itemUrl = musicUrl;
         std::string path = StringUtils::Format(
-            "{}/", record->at(CMusicDatabase::album_idAlbum).get_asInt());
+            "{}/", record->at(album_idAlbum).get_asInt());
         itemUrl.AppendPath(path);
 
         auto pItem{std::make_shared<CFileItem>(itemUrl.ToString(),
@@ -1139,7 +1139,7 @@ bool CMusicNavRepository::GetDiscsByWhere(CMusicDbUrl& musicUrl,
       try
       {
         if (album.idAlbum !=
-            record->at(albumOffset + CMusicDatabase::album_idAlbum).get_asInt())
+            record->at(albumOffset + album_idAlbum).get_asInt())
         { // New album
           useTitle = true;
           album = m_db.GetAlbumFromDataset(record, albumOffset);
@@ -1391,7 +1391,7 @@ bool CMusicNavRepository::GetSongsFullByWhere(const std::string& baseDir,
 
     // Get songs from returned rows. If join songartistview then there is a row for every artist
     items.Reserve(total);
-    int songArtistOffset = CMusicDatabase::song_enumCount;
+    int songArtistOffset = song_enumCount;
     int songId = -1;
     std::vector<CArtistCredit> artistCredits;
     const dbiplus::query_data& data = m_db.m_pDS->get_result_set().records;
@@ -1403,7 +1403,7 @@ bool CMusicNavRepository::GetSongsFullByWhere(const std::string& baseDir,
 
       try
       {
-        if (songId != record->at(CMusicDatabase::song_idSong).get_asInt())
+        if (songId != record->at(song_idSong).get_asInt())
         { //New song
           if (songId > 0 && !artistCredits.empty())
           {
@@ -1411,7 +1411,7 @@ bool CMusicNavRepository::GetSongsFullByWhere(const std::string& baseDir,
             m_db.GetFileItemFromArtistCredits(artistCredits, items[items.Size() - 1].get());
             artistCredits.clear();
           }
-          songId = record->at(CMusicDatabase::song_idSong).get_asInt();
+          songId = record->at(song_idSong).get_asInt();
           auto item{std::make_shared<CFileItem>()};
           m_db.GetFileItemFromDataset(record, item.get(), musicUrl);
           //! @todo remove hack to use program count for sorting by database returned order
@@ -1426,7 +1426,7 @@ bool CMusicNavRepository::GetSongsFullByWhere(const std::string& baseDir,
         if (artistData)
         {
           int idSongArtistRole =
-              record->at(songArtistOffset + CMusicDatabase::artistCredit_idRole).get_asInt();
+              record->at(songArtistOffset + artistCredit_idRole).get_asInt();
           if (idSongArtistRole == ROLE_ARTIST)
             artistCredits.push_back(
                 m_db.GetArtistCreditFromDataset(record, songArtistOffset));

@@ -109,15 +109,15 @@ bool CMusicPlaylistService::GetTop100Albums(std::vector<CAlbum>& albums)
       return true;
     }
 
-    int albumArtistOffset = CMusicDatabase::album_enumCount;
+    int albumArtistOffset = album_enumCount;
     int albumId = -1;
     while (!m_db.m_pDS->eof())
     {
       const dbiplus::sql_record* const record = m_db.m_pDS->get_sql_record();
 
-      if (albumId != record->at(CMusicDatabase::album_idAlbum).get_asInt())
+      if (albumId != record->at(album_idAlbum).get_asInt())
       { // New album
-        albumId = record->at(CMusicDatabase::album_idAlbum).get_asInt();
+        albumId = record->at(album_idAlbum).get_asInt();
         albums.push_back(m_db.GetAlbumFromDataset(record));
       }
       // Get album artists
@@ -232,15 +232,15 @@ bool CMusicPlaylistService::GetRecentlyPlayedAlbums(std::vector<CAlbum>& albums)
       return true;
     }
 
-    int albumArtistOffset = CMusicDatabase::album_enumCount;
+    int albumArtistOffset = album_enumCount;
     int albumId = -1;
     while (!m_db.m_pDS->eof())
     {
       const dbiplus::sql_record* const record = m_db.m_pDS->get_sql_record();
 
-      if (albumId != record->at(CMusicDatabase::album_idAlbum).get_asInt())
+      if (albumId != record->at(album_idAlbum).get_asInt())
       { // New album
-        albumId = record->at(CMusicDatabase::album_idAlbum).get_asInt();
+        albumId = record->at(album_idAlbum).get_asInt();
         albums.push_back(m_db.GetAlbumFromDataset(record));
       }
       // Get album artists
@@ -307,7 +307,7 @@ bool CMusicPlaylistService::GetRecentlyPlayedAlbumSongs(const std::string& strBa
     // Needs a separate query to determine number of songs to set items size.
     // Get songs from returned rows. Join means there is a row for every song artist
     // Gather artist credits, rather than append to item as go along, so can return array of artistIDs too
-    int songArtistOffset = CMusicDatabase::song_enumCount;
+    int songArtistOffset = song_enumCount;
     int songId = -1;
     std::vector<CArtistCredit> artistCredits;
     while (!m_db.m_pDS->eof())
@@ -315,8 +315,8 @@ bool CMusicPlaylistService::GetRecentlyPlayedAlbumSongs(const std::string& strBa
       const dbiplus::sql_record* const record = m_db.m_pDS->get_sql_record();
 
       int idSongArtistRole =
-          record->at(songArtistOffset + CMusicDatabase::artistCredit_idRole).get_asInt();
-      if (songId != record->at(CMusicDatabase::song_idSong).get_asInt())
+          record->at(songArtistOffset + artistCredit_idRole).get_asInt();
+      if (songId != record->at(song_idSong).get_asInt())
       { //New song
         if (songId > 0 && !artistCredits.empty())
         {
@@ -324,7 +324,7 @@ bool CMusicPlaylistService::GetRecentlyPlayedAlbumSongs(const std::string& strBa
           m_db.GetFileItemFromArtistCredits(artistCredits, items[items.Size() - 1].get());
           artistCredits.clear();
         }
-        songId = record->at(CMusicDatabase::song_idSong).get_asInt();
+        songId = record->at(song_idSong).get_asInt();
         auto item{std::make_shared<CFileItem>()};
         m_db.GetFileItemFromDataset(record, item.get(), baseUrl);
         items.Add(std::move(item));
@@ -393,15 +393,15 @@ bool CMusicPlaylistService::GetRecentlyAddedAlbums(std::vector<CAlbum>& albums,
       return true;
     }
 
-    int albumArtistOffset = CMusicDatabase::album_enumCount;
+    int albumArtistOffset = album_enumCount;
     int albumId = -1;
     while (!m_db.m_pDS->eof())
     {
       const dbiplus::sql_record* const record = m_db.m_pDS->get_sql_record();
 
-      if (albumId != record->at(CMusicDatabase::album_idAlbum).get_asInt())
+      if (albumId != record->at(album_idAlbum).get_asInt())
       { // New album
-        albumId = record->at(CMusicDatabase::album_idAlbum).get_asInt();
+        albumId = record->at(album_idAlbum).get_asInt();
         albums.push_back(m_db.GetAlbumFromDataset(record));
       }
       // Get album artists
@@ -465,7 +465,7 @@ bool CMusicPlaylistService::GetRecentlyAddedAlbumSongs(const std::string& strBas
 
     // Needs a separate query to determine number of songs to set items size.
     // Get songs from returned rows. Join means there is a row for every song artist
-    int songArtistOffset = CMusicDatabase::song_enumCount;
+    int songArtistOffset = song_enumCount;
     int songId = -1;
     std::vector<CArtistCredit> artistCredits;
     while (!m_db.m_pDS->eof())
@@ -473,8 +473,8 @@ bool CMusicPlaylistService::GetRecentlyAddedAlbumSongs(const std::string& strBas
       const dbiplus::sql_record* const record = m_db.m_pDS->get_sql_record();
 
       int idSongArtistRole =
-          record->at(songArtistOffset + CMusicDatabase::artistCredit_idRole).get_asInt();
-      if (songId != record->at(CMusicDatabase::song_idSong).get_asInt())
+          record->at(songArtistOffset + artistCredit_idRole).get_asInt();
+      if (songId != record->at(song_idSong).get_asInt())
       { //New song
         if (songId > 0 && !artistCredits.empty())
         {
@@ -482,7 +482,7 @@ bool CMusicPlaylistService::GetRecentlyAddedAlbumSongs(const std::string& strBas
           m_db.GetFileItemFromArtistCredits(artistCredits, items[items.Size() - 1].get());
           artistCredits.clear();
         }
-        songId = record->at(CMusicDatabase::song_idSong).get_asInt();
+        songId = record->at(song_idSong).get_asInt();
         auto item{std::make_shared<CFileItem>()};
         m_db.GetFileItemFromDataset(record, item.get(), baseUrl);
         items.Add(std::move(item));

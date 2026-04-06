@@ -21,42 +21,42 @@ class TestDatabaseUtilsHelper
 public:
   TestDatabaseUtilsHelper()
   {
-    album_idAlbum = CMusicDatabase::album_idAlbum;
-    album_strAlbum = CMusicDatabase::album_strAlbum;
-    album_strArtists = CMusicDatabase::album_strArtists;
-    album_strGenres = CMusicDatabase::album_strGenres;
-    album_strMoods = CMusicDatabase::album_strMoods;
-    album_strReleaseDate = CMusicDatabase::album_strReleaseDate;
-    album_strOrigReleaseDate = CMusicDatabase::album_strOrigReleaseDate;
-    album_strStyles = CMusicDatabase::album_strStyles;
-    album_strThemes = CMusicDatabase::album_strThemes;
-    album_strReview = CMusicDatabase::album_strReview;
-    album_strLabel = CMusicDatabase::album_strLabel;
-    album_strType = CMusicDatabase::album_strType;
-    album_fRating = CMusicDatabase::album_fRating;
-    album_iVotes = CMusicDatabase::album_iVotes;
-    album_iUserrating = CMusicDatabase::album_iUserrating;
-    album_dtDateAdded = CMusicDatabase::album_dateAdded;
+    album_idAlbum = ::album_idAlbum;
+    album_strAlbum = ::album_strAlbum;
+    album_strArtists = ::album_strArtists;
+    album_strGenres = ::album_strGenres;
+    album_strMoods = ::album_strMoods;
+    album_strReleaseDate = ::album_strReleaseDate;
+    album_strOrigReleaseDate = ::album_strOrigReleaseDate;
+    album_strStyles = ::album_strStyles;
+    album_strThemes = ::album_strThemes;
+    album_strReview = ::album_strReview;
+    album_strLabel = ::album_strLabel;
+    album_strType = ::album_strType;
+    album_fRating = ::album_fRating;
+    album_iVotes = ::album_iVotes;
+    album_iUserrating = ::album_iUserrating;
+    album_dtDateAdded = ::album_dateAdded;
 
-    song_idSong = CMusicDatabase::song_idSong;
-    song_strTitle = CMusicDatabase::song_strTitle;
-    song_iTrack = CMusicDatabase::song_iTrack;
-    song_iDuration = CMusicDatabase::song_iDuration;
-    song_strReleaseDate = CMusicDatabase::song_strReleaseDate;
-    song_strOrigReleaseDate = CMusicDatabase::song_strOrigReleaseDate;
-    song_strFileName = CMusicDatabase::song_strFileName;
-    song_iTimesPlayed = CMusicDatabase::song_iTimesPlayed;
-    song_iStartOffset = CMusicDatabase::song_iStartOffset;
-    song_iEndOffset = CMusicDatabase::song_iEndOffset;
-    song_lastplayed = CMusicDatabase::song_lastplayed;
-    song_rating = CMusicDatabase::song_rating;
-    song_votes = CMusicDatabase::song_votes;
-    song_userrating = CMusicDatabase::song_userrating;
-    song_comment = CMusicDatabase::song_comment;
-    song_strAlbum = CMusicDatabase::song_strAlbum;
-    song_strPath = CMusicDatabase::song_strPath;
-    song_strGenres = CMusicDatabase::song_strGenres;
-    song_strArtists = CMusicDatabase::song_strArtists;
+    song_idSong = ::song_idSong;
+    song_strTitle = ::song_strTitle;
+    song_iTrack = ::song_iTrack;
+    song_iDuration = ::song_iDuration;
+    song_strReleaseDate = ::song_strReleaseDate;
+    song_strOrigReleaseDate = ::song_strOrigReleaseDate;
+    song_strFileName = ::song_strFileName;
+    song_iTimesPlayed = ::song_iTimesPlayed;
+    song_iStartOffset = ::song_iStartOffset;
+    song_iEndOffset = ::song_iEndOffset;
+    song_lastplayed = ::song_lastplayed;
+    song_rating = ::song_rating;
+    song_votes = ::song_votes;
+    song_userrating = ::song_userrating;
+    song_comment = ::song_comment;
+    song_strAlbum = ::song_strAlbum;
+    song_strPath = ::song_strPath;
+    song_strGenres = ::song_strGenres;
+    song_strArtists = ::song_strArtists;
   }
 
   int album_idAlbum;

@@ -687,145 +687,145 @@ int DatabaseUtils::GetField(Field field, const MediaType &mediaType, bool asInde
   if (mediaType == MediaTypeAlbum)
   {
     if (field == Field::ID)
-      return CMusicDatabase::album_idAlbum;
+      return album_idAlbum;
     else if (field == Field::ALBUM)
-      return CMusicDatabase::album_strAlbum;
+      return album_strAlbum;
     else if (field == Field::ARTIST || field == Field::ALBUM_ARTIST)
-      return CMusicDatabase::album_strArtists;
+      return album_strArtists;
     else if (field == Field::GENRE)
-      return CMusicDatabase::album_strGenres;
+      return album_strGenres;
     else if (field == Field::YEAR)
-      return CMusicDatabase::album_strReleaseDate;
+      return album_strReleaseDate;
     else if (field == Field::MOODS)
-      return CMusicDatabase::album_strMoods;
+      return album_strMoods;
     else if (field == Field::STYLES)
-      return CMusicDatabase::album_strStyles;
+      return album_strStyles;
     else if (field == Field::THEMES)
-      return CMusicDatabase::album_strThemes;
+      return album_strThemes;
     else if (field == Field::REVIEW)
-      return CMusicDatabase::album_strReview;
+      return album_strReview;
     else if (field == Field::MUSIC_LABEL)
-      return CMusicDatabase::album_strLabel;
+      return album_strLabel;
     else if (field == Field::ALBUM_TYPE)
-      return CMusicDatabase::album_strType;
+      return album_strType;
     else if (field == Field::RATING)
-      return CMusicDatabase::album_fRating;
+      return album_fRating;
     else if (field == Field::VOTES)
-      return CMusicDatabase::album_iVotes;
+      return album_iVotes;
     else if (field == Field::USER_RATING)
-      return CMusicDatabase::album_iUserrating;
+      return album_iUserrating;
     else if (field == Field::PLAYCOUNT)
-      return CMusicDatabase::album_iTimesPlayed;
+      return album_iTimesPlayed;
     else if (field == Field::LAST_PLAYED)
-      return CMusicDatabase::album_dtLastPlayed;
+      return album_dtLastPlayed;
     else if (field == Field::DATE_ADDED)
-      return CMusicDatabase::album_dateAdded;
+      return album_dateAdded;
     else if (field == Field::DATE_NEW)
-      return CMusicDatabase::album_dateNew;
+      return album_dateNew;
     else if (field == Field::DATE_MODIFIED)
-      return CMusicDatabase::album_dateModified;
+      return album_dateModified;
     else if (field == Field::TOTAL_DISCS)
-      return CMusicDatabase::album_iTotalDiscs;
+      return album_iTotalDiscs;
     else if (field == Field::ORIG_YEAR || field == Field::ORIG_DATE)
-      return CMusicDatabase::album_strOrigReleaseDate;
+      return album_strOrigReleaseDate;
     else if (field == Field::ALBUM_STATUS)
-      return CMusicDatabase::album_strReleaseStatus;
+      return album_strReleaseStatus;
     else if (field == Field::ALBUM_DURATION)
-      return CMusicDatabase::album_iAlbumDuration;
+      return album_iAlbumDuration;
   }
   else if (mediaType == MediaTypeSong)
   {
     if (field == Field::ID)
-      return CMusicDatabase::song_idSong;
+      return song_idSong;
     else if (field == Field::TITLE)
-      return CMusicDatabase::song_strTitle;
+      return song_strTitle;
     else if (field == Field::TRACK_NUMBER)
-      return CMusicDatabase::song_iTrack;
+      return song_iTrack;
     else if (field == Field::TIME)
-      return CMusicDatabase::song_iDuration;
+      return song_iDuration;
     else if (field == Field::YEAR)
-      return CMusicDatabase::song_strReleaseDate;
+      return song_strReleaseDate;
     else if (field == Field::FILENAME)
-      return CMusicDatabase::song_strFileName;
+      return song_strFileName;
     else if (field == Field::PLAYCOUNT)
-      return CMusicDatabase::song_iTimesPlayed;
+      return song_iTimesPlayed;
     else if (field == Field::START_OFFSET)
-      return CMusicDatabase::song_iStartOffset;
+      return song_iStartOffset;
     else if (field == Field::END_OFFSET)
-      return CMusicDatabase::song_iEndOffset;
+      return song_iEndOffset;
     else if (field == Field::LAST_PLAYED)
-      return CMusicDatabase::song_lastplayed;
+      return song_lastplayed;
     else if (field == Field::RATING)
-      return CMusicDatabase::song_rating;
+      return song_rating;
     else if (field == Field::USER_RATING)
-      return CMusicDatabase::song_userrating;
+      return song_userrating;
     else if (field == Field::VOTES)
-      return CMusicDatabase::song_votes;
+      return song_votes;
     else if (field == Field::COMMENT)
-      return CMusicDatabase::song_comment;
+      return song_comment;
     else if (field == Field::MOODS)
-      return CMusicDatabase::song_mood;
+      return song_mood;
     else if (field == Field::ALBUM)
-      return CMusicDatabase::song_strAlbum;
+      return song_strAlbum;
     else if (field == Field::PATH)
-      return CMusicDatabase::song_strPath;
+      return song_strPath;
     else if (field == Field::GENRE)
-      return CMusicDatabase::song_strGenres;
+      return song_strGenres;
     else if (field == Field::ARTIST || field == Field::ALBUM_ARTIST)
-      return CMusicDatabase::song_strArtists;
+      return song_strArtists;
     else if (field == Field::DATE_ADDED)
-      return CMusicDatabase::song_dateAdded;
+      return song_dateAdded;
     else if (field == Field::DATE_NEW)
-      return CMusicDatabase::song_dateNew;
+      return song_dateNew;
     else if (field == Field::DATE_MODIFIED)
-      return CMusicDatabase::song_dateModified;
+      return song_dateModified;
     else if (field == Field::BPM)
-      return CMusicDatabase::song_iBPM;
+      return song_iBPM;
     else if (field == Field::MUSIC_BITRATE)
-      return CMusicDatabase::song_iBitRate;
+      return song_iBitRate;
     else if (field == Field::SAMPLE_RATE)
-      return CMusicDatabase::song_iSampleRate;
+      return song_iSampleRate;
     else if (field == Field::NUMBER_OF_CHANNELS)
-      return CMusicDatabase::song_iChannels;
+      return song_iChannels;
   }
   else if (mediaType == MediaTypeArtist)
   {
     if (field == Field::ID)
-      return CMusicDatabase::artist_idArtist;
+      return artist_idArtist;
     else if (field == Field::ARTIST)
-      return CMusicDatabase::artist_strArtist;
+      return artist_strArtist;
     else if (field == Field::ARTIST_SORT)
-      return CMusicDatabase::artist_strSortName;
+      return artist_strSortName;
     else if (field == Field::ARTIST_TYPE)
-      return CMusicDatabase::artist_strType;
+      return artist_strType;
     else if (field == Field::GENDER)
-      return CMusicDatabase::artist_strGender;
+      return artist_strGender;
     else if (field == Field::DISAMBIGUATION)
-      return CMusicDatabase::artist_strDisambiguation;
+      return artist_strDisambiguation;
     else if (field == Field::GENRE)
-      return CMusicDatabase::artist_strGenres;
+      return artist_strGenres;
     else if (field == Field::MOODS)
-      return CMusicDatabase::artist_strMoods;
+      return artist_strMoods;
     else if (field == Field::STYLES)
-      return CMusicDatabase::artist_strStyles;
+      return artist_strStyles;
     else if (field == Field::INSTRUMENTS)
-      return CMusicDatabase::artist_strInstruments;
+      return artist_strInstruments;
     else if (field == Field::BIOGRAPHY)
-      return CMusicDatabase::artist_strBiography;
+      return artist_strBiography;
     else if (field == Field::BORN)
-      return CMusicDatabase::artist_strBorn;
+      return artist_strBorn;
     else if (field == Field::BAND_FORMED)
-      return CMusicDatabase::artist_strFormed;
+      return artist_strFormed;
     else if (field == Field::DISBANDED)
-      return CMusicDatabase::artist_strDisbanded;
+      return artist_strDisbanded;
     else if (field == Field::DIED)
-      return CMusicDatabase::artist_strDied;
+      return artist_strDied;
     else if (field == Field::DATE_ADDED)
-      return CMusicDatabase::artist_dateAdded;
+      return artist_dateAdded;
     else if (field == Field::DATE_NEW)
-      return CMusicDatabase::artist_dateNew;
+      return artist_dateNew;
     else if (field == Field::DATE_MODIFIED)
-      return CMusicDatabase::artist_dateModified;
+      return artist_dateModified;
   }
   else if (mediaType == MediaTypeMusicVideo)
   {
