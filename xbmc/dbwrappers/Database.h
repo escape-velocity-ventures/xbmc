@@ -24,6 +24,11 @@ class CDbUrl;
 class CProfileManager;
 struct SortDescription;
 
+namespace KODI::DATABASE
+{
+class CMusicSchemaManager;
+} // namespace KODI::DATABASE
+
 class CDatabase
 {
 public:
@@ -266,6 +271,7 @@ public:
 
 protected:
   friend class CDatabaseManager;
+  friend class KODI::DATABASE::CMusicSchemaManager;
 
   void Split(const std::string& strFileNameAndPath,
              std::string& strPath,
