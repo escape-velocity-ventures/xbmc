@@ -15,7 +15,10 @@
 class CFileItemList;
 class CMusicDatabase;
 class CMusicDbUrl;
-class Filter;
+
+// Filter is a nested class inside CDatabase
+#include "dbwrappers/Database.h"
+using Filter = CDatabase::Filter;
 
 /*!
  \ingroup music
